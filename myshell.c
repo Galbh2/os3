@@ -13,8 +13,38 @@
 static char *my_argv[16], *my_envp[16];
 static char *search_path[16];
 
-#define BUFFSIZE 256
+#define BUFFSIZE 4096
 
+/**
+ * Parse an array of words to an array of commands
+ */
+char** toArrayOfArrays(char* argv[]);
+
+/**
+ * Gets array of commands, and execute each command
+ */
+void executeEachCmd(char** commands);
+
+/**
+ * Gets a command represented as a string, parses it and executes
+ */
+int parseAndExecute(char* command);
+
+/**
+ * Arguments:
+ * 		name - the name of the command
+ * 		doInBackground - boolean value which indicates if the cmd should be ran in a new process
+ * 		options - two dimensional array of optiotns and values
+ * 		argv - a list of arguments
+ *
+ * this functions execute a given command
+ */
+int executeCmd(char* name, int doInBackground, char* options[][], char* argv[]);
+
+
+
+
+/*
 char *lsh_read_line(void) {
   int buffSize = BUFFSIZE;
   int position = 0;
@@ -53,9 +83,11 @@ char *lsh_read_line(void) {
     }
   }
 }
+*/
 
 int main(int argc, char *argv[], char *envp[])
 {
+	/*
 	char c;
 	int i, fd;
 	char *tmp = (char *)malloc(sizeof(char) * 100);
@@ -117,5 +149,7 @@ int main(int argc, char *argv[], char *envp[])
 	for(i=0;i<10;i++)
 		free(search_path[i]);
 	printf("\n");
+	*/
+	printf("hello world");
 	return 0;
 }

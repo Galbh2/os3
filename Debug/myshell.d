@@ -1,1 +1,1 @@
-myshell.d: ../myshell.c
+myshell.o: ../myshell.c
