@@ -1,0 +1,1 @@
+myshell.d: ../myshell.c
