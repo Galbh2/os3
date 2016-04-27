@@ -1,1 +1,0 @@
-myshell.o: ../myshell.c
