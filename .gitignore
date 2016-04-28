@@ -32,3 +32,5 @@
 *.dSYM/
 
 *.mk
+*.d
+Debug/os3
