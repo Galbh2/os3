@@ -207,18 +207,14 @@ int parseAndExecute(char* command) {
 	p_args_index = p_args;
 
 	// extract the name of the command
-	// token = strtok (command," ");
-	// name = token;
+
+	*p_args_index = strtok (command," ");
+	p_args_index++;
 
 	// builds the argument array
-	while ( (token = strtok (NULL," ")) != NULL) {
-		*p_args_index = token;
+	while ( (*p_args_index = strtok (NULL," ")) != NULL) {
 		p_args_index++;
 	}
-
-	*p_args_index = NULL;
-
-	printf("rtgfd");
 
 	return executeCmd(p_args, numOfWords - 1, runInBack);
 
@@ -228,19 +224,17 @@ int executeCmd(char* argv[], int numOfArgs, int doInBackground) {
 
 	// run chdir and exit
 
-
 	char* name = argv[0];
 	int returnCode;
 
 	if (!strcmp(name, "cd") && (numOfArgs == 1)) {
-		if ( (returnCode = chdir(argv[0])) != 0) {
+		if ( (returnCode = chdir(argv[1])) != 0) {
 			perror("Error while cd");
 		}
 		return returnCode;
 	} else if (!strcmp(name, "exit")) {
 		exit(0);
 	}
-
 
 	int status;
 	pid_t childPid = fork();
