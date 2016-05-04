@@ -42,7 +42,7 @@ int parseAndExecute(char* command);
  *
  * this functions execute a given command
  */
-int executeCmd(char* name, char* argv[], int numOfArgs, int doInBackground);
+int executeCmd(char* argv[], int numOfArgs, int doInBackground);
 
 /**
  * Main loop
@@ -55,13 +55,25 @@ void runMainLoop();
 /**
  * Releases the block of commands from the heap
  */
-void releaseMemory(char** commands);
+// void releaseMemory(char** commands);
 
 /**
  * Checks if memory allocation succeed
  */
 void checkAllocation(void* p);
 
+/**
+ * prints the current dir
+ */
+
+void printCurrentDir();
+
+void printCurrentDir() {
+
+	char* currentDir =  getcwd(NULL,0);
+		printf("%s> ",currentDir);
+		free(currentDir);
+}
 
 void checkAllocation(void* p) {
 	if (!p) {
@@ -82,17 +94,23 @@ void runMainLoop(){
 
 	checkAllocation(buffer);
 
-	printf("Enter Commands\n");
+	// printf("Enter Commands\n");
+
+	printCurrentDir();
 
 	while (1) {
+
 		c = getchar();
 		if (c =='\n') {
 
 			// close the string
-
 			buffer[positions] = '\0';
 
+			// start the chain of execution
+
 			toArrayOfArrays(buffer, positions);
+
+			printCurrentDir();
 
 			// cleanup
 			free(buffer);
@@ -162,7 +180,6 @@ int parseAndExecute(char* command) {
 	char* p_position = command;
 	int numOfWords = 1;
 	int runInBack = 0;
-	char* name;
 	char** p_args_index;
 
 	int len = strlen(command);
@@ -182,17 +199,16 @@ int parseAndExecute(char* command) {
 		p_position++;
 	}
 
-
 	// Allocate memory for the arguments
 
-	char** p_args = malloc(sizeof(char*) * numOfWords);
+	char** p_args = malloc(sizeof(char*) * numOfWords + 1);
 	checkAllocation(p_args);
 
 	p_args_index = p_args;
 
 	// extract the name of the command
-	token = strtok (command," ");
-	name = token;
+	// token = strtok (command," ");
+	// name = token;
 
 	// builds the argument array
 	while ( (token = strtok (NULL," ")) != NULL) {
@@ -200,20 +216,31 @@ int parseAndExecute(char* command) {
 		p_args_index++;
 	}
 
-	return executeCmd(name, p_args, numOfWords - 1, runInBack);
+	*p_args_index = NULL;
+
+	printf("rtgfd");
+
+	return executeCmd(p_args, numOfWords - 1, runInBack);
 
 }
 
-int executeCmd(char* name, char* argv[], int numOfArgs, int doInBackground) {
+int executeCmd(char* argv[], int numOfArgs, int doInBackground) {
 
-	/*
-	 printf("%s\n", name);
-	 int i;
-	 for (i = 0; i < numOfArgs; i++) {
-	 printf("%s\n", argv[i]);
-	 }
-	 printf("%d in back\n", doInBackground);
-	 */
+	// run chdir and exit
+
+
+	char* name = argv[0];
+	int returnCode;
+
+	if (!strcmp(name, "cd") && (numOfArgs == 1)) {
+		if ( (returnCode = chdir(argv[0])) != 0) {
+			perror("Error while cd");
+		}
+		return returnCode;
+	} else if (!strcmp(name, "exit")) {
+		exit(0);
+	}
+
 
 	int status;
 	pid_t childPid = fork();
@@ -224,17 +251,16 @@ int executeCmd(char* name, char* argv[], int numOfArgs, int doInBackground) {
 		}
 	} else {
 		if (!doInBackground) {
-			printf("block\n");
+			// printf("block\n");
 			waitpid(childPid, &status, 0);
-			printf("release block\n");
+			// printf("release block\n");
 		}
-
-		return 1;
 	}
+
+	return 1;
 }
 
 int main(int argc, char *argv[], char *envp[]){
 	runMainLoop();
-	printf("hello world");
 	return 0;
 }
