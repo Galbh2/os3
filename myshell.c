@@ -10,8 +10,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-// static char *my_argv[16], *my_envp[16];
-// static char *search_path[16];
 
 // Array of pointers to the commands
 static char* p_commands[16];
@@ -63,7 +61,7 @@ void runMainLoop();
 void checkAllocation(void* p);
 
 /**
- * prints the current dir
+ * prints the current directory
  */
 
 void printCurrentDir();
@@ -94,9 +92,7 @@ void runMainLoop(){
 
 	checkAllocation(buffer);
 
-	// printf("Enter Commands\n");
-
-	printCurrentDir();
+	printf("/> ");
 
 	while (1) {
 
@@ -169,14 +165,12 @@ void executeEachCmd(char** commands, int size) {
 	int i;
 
 	for (i = 0; i < size; i++) {
-		// printf("%s\n", 	printf("spaces = %d", numOfSpaces);commands[i]);
 		parseAndExecute(commands[i]);
 	}
 }
 
 int parseAndExecute(char* command) {
 
-	char* token;
 	char* p_position = command;
 	int numOfWords = 1;
 	int runInBack = 0;
@@ -200,14 +194,12 @@ int parseAndExecute(char* command) {
 	}
 
 	// Allocate memory for the arguments
-
 	char** p_args = malloc(sizeof(char*) * numOfWords + 1);
 	checkAllocation(p_args);
 
 	p_args_index = p_args;
 
 	// extract the name of the command
-
 	*p_args_index = strtok (command," ");
 	p_args_index++;
 
@@ -223,7 +215,6 @@ int parseAndExecute(char* command) {
 int executeCmd(char* argv[], int numOfArgs, int doInBackground) {
 
 	// run chdir and exit
-
 	char* name = argv[0];
 	int returnCode;
 
@@ -241,13 +232,11 @@ int executeCmd(char* argv[], int numOfArgs, int doInBackground) {
 
 	if (!childPid) {
 		if (execvp(name, argv) == -1) {
-			perror("Command doesn't exist");
+			printf("Error: cannot start program %s\n", name);
 		}
 	} else {
 		if (!doInBackground) {
-			// printf("block\n");
 			waitpid(childPid, &status, 0);
-			// printf("release block\n");
 		}
 	}
 
